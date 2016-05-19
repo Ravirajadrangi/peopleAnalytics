@@ -10,9 +10,35 @@ fdat = na.omit(fdat)
 ## See data types
 str(fdat)
 
+
+#-----------------------------------------------
 # Columns to add:
 # Input: Course.name, Course.gpa, Course.online
+
+#Number of Courses: Not used, because every employee took 1 course only. 
+#Because it is a continuation of the previous data set that suggested that employees needed more education/training to reduce the attrition. 
+
+#Courses Names:
+#1. Course A
+#2. Course B
+
+#Course.Online
+#Yes/No
+
+#Course Gpa:
+#1-10
+
 # Output: Attrition, Performance.delta
+
+#Attrition:
+#Yes/No
+
+#Performance.delta
+# -/+ %
+#-----------------------------------------------
+
+
+
 
 
 # Factors
