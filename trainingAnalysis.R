@@ -1,8 +1,8 @@
 # Libraries
 
 # Load data
-fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
-
+#fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
+fdat = read.csv("/Users/Hugo/Documents/EIT Master/SingularMeaning/peopleanalytics/employee-training.csv")
 # Clean data
 fdat = subset(fdat, select = -c(Position.count, Planned.position.count, Terminations, Internal.hires, External.hires, Department, Organization))
 fdat = na.omit(fdat)
@@ -17,6 +17,11 @@ str(fdat)
 
 #Number of Courses: Not used, because every employee took 1 course only. 
 #Because it is a continuation of the previous data set that suggested that employees needed more education/training to reduce the attrition. 
+
+#Position: In order to have continuity between history 1 and 2, change position names to
+#1. Sales Executive
+#2. Sales Manager
+#3. Sales Representatives
 
 #Courses Names:
 #1. Course A
@@ -37,12 +42,7 @@ str(fdat)
 # -/+ %
 #-----------------------------------------------
 
-
-
-
-
 # Factors
-
 
 
 # Functions
