@@ -1,0 +1,55 @@
+- Enfocarnos también en las variables menos relevantes.
+- Hacer un análisis mas completo y explicar el proceso.
+- Proponer un modelo general en el cual las empresas puedan agregar su base de datos de empleados para predecir cuales tienen riesgo de irse.
+- Interfaz gráfica con Shiny para ver la información.
+
+Conclusiones del análisis:
+
+- Cuales son las variables mas relevantes.
+- Cuales son las variables menos relevantes.
+- Datos curiosos entre variables, Ejemplos:
+
+- Sales Representatives that travel a lot: Attrition Rate -> 50%
+- Work-Life Balance afecta el attrition rate de los tecnicians mucho mas que el de los Sales Representatives.
+
+-
+
+- Mostrar acciones que se pueden tomar.
+
+Funcionalidad/Interfaz Shiny:
+
+- Relación Attrtion-Variable/Variable: Selección de variable (O grupo de variables) y obtención de gráfica relacionada a attrition.
+
+https://deedata.wordpress.com/2016/01/11/employee-attrition-exploratory-data-analysis-and-predictive-modeling-using-r-part-1/
+
+- Modelos: Selección de tree model y mostrarlo. (No existe un paquete en R, pero si en D3)http://bl.ocks.org/pprett/raw/3813537/
+
+- Creación de Tool que pueda recibir un Data Set con los datos de una empresa y generar una respuesta con el % de que un empleado se vaya.
+
+- Tarea uno: Attrition
+
+Conclusiones más específicas:
+- Sales Representatives that travel a lot: Attrition Rate -> 50%
+- Work-Life Balance afecta el attrition rate de los technicians mucho mas que el de los Sales Representatives.
+-
+
+- Tarea dos: Formation
+
+- Formarlos para que cobren mas y se queden mas
+
+- Programacion Visual sobre una herramienta sencilla que puedan usar los asistentes. No para descubrir los datos, sino para usarla.
+- Ejemplo: Herramienta de producción que predice el attrition.
+
+- Ventas
+- Diferentes cursos: Modelo A, Modelo B como hipotesis. Manera mas cientifica.
+- Por regiones
+
+Slide contact pool: No la entiendo
+
+Histograma: No se ven el nombre de las coordenadas
+
+Frecuencia - A: SSE y SSO ?
+
+Gráfica: Me gusto mucho la dirección del viento y potencia- buena conclusion e interesante.
+
+Algún numero que diga cuanto ahorraron en penalizaciones podría ser bueno.
