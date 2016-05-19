@@ -19,9 +19,9 @@ str(fdat)
 #Because it is a continuation of the previous data set that suggested that employees needed more education/training to reduce the attrition. 
 
 #Position: In order to have continuity between history 1 and 2, change position names to
-#1. Sales Executive
-#2. Sales Manager
-#3. Sales Representatives
+#1. Sales Executive -> 73.6%
+#2. Sales Manager -> 8.5%
+#3. Sales Representatives 18.1%
 
 #Courses Names:
 #1. Course A
@@ -56,3 +56,20 @@ fdat$Attrition = sapply(fdat$Course.days, function(days) {
 
 ggplot(fdat, aes(x = Course.days)) + geom_bar(aes(fill = Attrition), position = 'fill') +
   scale_y_continuous(labels = percent_format())
+
+
+fdat$Course.name = sapply(fdat$Course.days, function(days) {
+  ifelse(days > 5, assign_course_name(0.50), assign_course_name(0.50))
+})
+
+fdat$Course.online = sapply(fdat$Course.days, function(days) {
+  ifelse(days > 5, assign_course_online(0.46), assign_course_online(0.54))
+})
+
+assign_course_name <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Course A", "Course B"))
+}
+
+assign_course_online <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
+}
