@@ -69,8 +69,8 @@ fdat$Abandono = sapply(fdat$Puesto, function(Puesto) {
   
 })
 
-fdat$Curso = sapply(fdat$Curso.dias, function(dias) {
-  assign_Curso_name(0.55)
+fdat$Tematica = sapply(fdat$Curso.dias, function(dias) {
+  assign_Tematica(0.55)
 })
 
 fdat$Curso.online = sapply(fdat$Curso.dias, function(dias) {
@@ -93,13 +93,14 @@ assign_Puesto <- function() {
                 ifelse(perc <= 0.181, "Representante", "Ejecutivo")))
 }
 
-assign_Curso <- function(perc) {
-  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Curso A", "Curso B"))
+assign_Tematica <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Negociacion", "Presentacion"))
 }
 
 assign_Curso_online <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
 }
 
+names(fdat)[names(fdat) == 'Curso'] <- 'Tematica'
 # Plots
 ggplot(fdat,  aes(x = Curso.name, fill = Curso.online)  ) + geom_bar() + xlab('Curso.name') + ylab('Count')
