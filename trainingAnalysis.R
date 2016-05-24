@@ -3,10 +3,6 @@
 # Load data
 #fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
 fdat = read.csv("/Users/Hugo/Documents/EIT Master/SingularMeaning/peopleanalytics/employee-training.csv")
-# Clean data
-fdat = subset(fdat, select = -c(Position.count, Planned.position.count, Terminations, Internal.hires, External.hires, Department, Organization))
-fdat = na.omit(fdat)
-
 ## See data types
 str(fdat)
 
