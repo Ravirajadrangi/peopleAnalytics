@@ -11,6 +11,20 @@ fdat = na.omit(fdat)
 str(fdat)
 
 
+#Adding Columns
+Course.name <<- 0
+Course.gpa <<- 0
+Course.online <<- 0
+Performance.delta <<- 0
+Attrition <<- 0
+fdat["Course.name"] <- Course.name
+fdat["Course.gpa"] <- Course.gpa
+fdat["Course.online"] <- Course.online
+fdat["Performance.delta"] <- Performance.delta
+fdat["Attrition"] <- Attrition
+
+
+write.csv(fdat, "employee-training.csv")
 #-----------------------------------------------
 # Columns to add:
 # Input: Course.name, Course.gpa, Course.online
@@ -24,11 +38,12 @@ str(fdat)
 #3. Sales Representatives 18.1%
 
 #Courses Names:
-#1. Course A
-#2. Course B
+#1. Course A 55%
+#2. Course B 45%
 
 #Course.Online
-#Yes/No
+#Yes 65%
+#No 35%
 
 #Course Gpa:
 #1-10
@@ -46,10 +61,6 @@ str(fdat)
 
 
 # Functions
-assign_attrition <- function(perc) {
-  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
-}
-
 fdat$Attrition = sapply(fdat$Course.days, function(days) {
   ifelse(days > 5, assign_attrition(0.05), assign_attrition(0.95))
 })
@@ -59,12 +70,20 @@ ggplot(fdat, aes(x = Course.days)) + geom_bar(aes(fill = Attrition), position = 
 
 
 fdat$Course.name = sapply(fdat$Course.days, function(days) {
-  ifelse(days > 5, assign_course_name(0.50), assign_course_name(0.50))
+  assign_course_name(0.55)
 })
 
 fdat$Course.online = sapply(fdat$Course.days, function(days) {
-  ifelse(days > 5, assign_course_online(0.46), assign_course_online(0.54))
+  assign_course_online(0.65)
 })
+
+fdat$Course.gpa = sapply(fdat$Course.days, function(days) {
+  runif(1, 4.0, 10.0)
+})
+
+assign_attrition <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
+}
 
 assign_course_name <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Course A", "Course B"))
@@ -73,3 +92,14 @@ assign_course_name <- function(perc) {
 assign_course_online <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
 }
+
+
+#Graphs
+
+ggplot(fdat,  aes(x = Course.name, fill = Course.online)  ) + geom_bar() + xlab('Course.name') + ylab('Count')
+
+ggplot(fdat, aes(x = Course.name)) + geom_bar(), position = 'fill') 
+
+
+
+
