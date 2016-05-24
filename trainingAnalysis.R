@@ -11,17 +11,7 @@ fdat = na.omit(fdat)
 str(fdat)
 
 
-#Adding Columns
-Course.name <<- 0
-Course.gpa <<- 0
-Course.online <<- 0
-Performance.delta <<- 0
-Attrition <<- 0
-fdat["Course.name"] <- Course.name
-fdat["Course.gpa"] <- Course.gpa
-fdat["Course.online"] <- Course.online
-fdat["Performance.delta"] <- Performance.delta
-fdat["Attrition"] <- Attrition
+# Factors
 
 
 write.csv(fdat, "employee-training.csv")
@@ -36,6 +26,11 @@ write.csv(fdat, "employee-training.csv")
 #1. Sales Executive -> 73.6%
 #2. Sales Manager -> 8.5%
 #3. Sales Representatives 18.1%
+
+# Attrition according to position:
+#1. Sales Executive -> 17.48%
+#2. Sales Manager -> 5.4%
+#3. Sales Representatives 39.75%
 
 #Courses Names:
 #1. Course A 55%
@@ -57,17 +52,15 @@ write.csv(fdat, "employee-training.csv")
 # -/+ %
 #-----------------------------------------------
 
-# Factors
-
-
-# Functions
-fdat$Attrition = sapply(fdat$Course.days, function(days) {
-  ifelse(days > 5, assign_attrition(0.05), assign_attrition(0.95))
+fdat$Position = sapply(fdat$Position, function(position) {
+  return(assign_position())
 })
 
-ggplot(fdat, aes(x = Course.days)) + geom_bar(aes(fill = Attrition), position = 'fill') +
-  scale_y_continuous(labels = percent_format())
-
+fdat$Attrition = sapply(fdat$Position, function(position) {
+  ifelse(position == "Manager", assign_attrition(0.054),
+         ifelse(position == "Executive", assign_attrition(0.1748), assign_attrition(0.3975)))
+  
+})
 
 fdat$Course.name = sapply(fdat$Course.days, function(days) {
   assign_course_name(0.55)
@@ -81,8 +74,16 @@ fdat$Course.gpa = sapply(fdat$Course.days, function(days) {
   runif(1, 4.0, 10.0)
 })
 
+# Functions
+
 assign_attrition <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
+}
+
+assign_position <- function() {
+  perc = runif(1, 0.0, 1.0)
+  return(ifelse(perc <= 0.085, "Manager",
+                ifelse(perc <= 0.181, "Representative", "Executive")))
 }
 
 assign_course_name <- function(perc) {
@@ -93,13 +94,8 @@ assign_course_online <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
 }
 
-
 #Graphs
 
 ggplot(fdat,  aes(x = Course.name, fill = Course.online)  ) + geom_bar() + xlab('Course.name') + ylab('Count')
-
-ggplot(fdat, aes(x = Course.name)) + geom_bar(), position = 'fill') 
-
-
 
 
