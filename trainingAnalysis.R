@@ -3,6 +3,9 @@
 # Load data
 #fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
 fdat = read.csv("/Users/Hugo/Documents/EIT Master/SingularMeaning/peopleanalytics/employee-training.csv")
+# Clean data
+fdat = na.omit(fdat)
+
 ## See data types
 str(fdat)
 
@@ -90,8 +93,8 @@ assign_course_online <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
 }
 
-#Graphs
 
+# Plots
 ggplot(fdat,  aes(x = Course.name, fill = Course.online)  ) + geom_bar() + xlab('Course.name') + ylab('Count')
 
 
