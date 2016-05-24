@@ -13,7 +13,7 @@ str(fdat)
 # Factors
 
 
-write.csv(fdat, "employee-training.csv")
+write.csv(fdat, "~/sngular/peopleAnalytics/employee-training.csv", row.names = FALSE)
 #-----------------------------------------------
 # Columns to add:
 # Input: Course.name, Course.gpa, Course.online
