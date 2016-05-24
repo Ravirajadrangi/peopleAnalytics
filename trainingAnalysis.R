@@ -14,87 +14,92 @@ str(fdat)
 
 
 write.csv(fdat, "~/sngular/peopleAnalytics/employee-training.csv", row.names = FALSE)
+
 #-----------------------------------------------
 # Columns to add:
-# Input: Course.name, Course.gpa, Course.online
+# Input: Curso.name, Curso.nota, Curso.online
 
-#Number of Courses: Not used, because every employee took 1 course only. 
-#Because it is a continuation of the previous data set that suggested that employees needed more education/training to reduce the attrition. 
 
-#Position: In order to have continuity between history 1 and 2, change position names to
-#1. Sales Executive -> 73.6%
+#Number of Cursos: Not used, because every employee took 1 Curso only. 
+#Because it is a continuation of the previous data set that suggested that employees needed more education/training to reduce the Abandono. 
+
+#Puesto
+#Puesto: In order to have continuity between history 1 and 2, change Puesto names to
+#1. Sales Ejecutivo -> 73.6%
 #2. Sales Manager -> 8.5%
-#3. Sales Representatives 18.1%
+#3. Sales Representantes 18.1%
 
-# Attrition according to position:
-#1. Sales Executive -> 17.48%
+# Abandono according to Puesto:
+#1. Sales Ejecutivo -> 17.48%
 #2. Sales Manager -> 5.4%
-#3. Sales Representatives 39.75%
+#3. Sales Representantes 39.75%
 
-#Courses Names:
-#1. Course A 55%
-#2. Course B 45%
+#Curso
+#Cursos Names:
+#1. Curso A 55%
+#2. Curso B 45%
 
-#Course.Online
-#Yes 65%
+#Curso.Online
+#Curso.Online
+#Si 65%
 #No 35%
 
-#Course Gpa:
+#Curso.nota
+#Curso nota:
 #1-10
 
-# Output: Attrition, Performance.delta
+# Output: Abandono, Performance.delta
 
-#Attrition:
-#Yes/No
+#Abandono
+#Abandono:
+#Si/No
 
+#Rendimiento.delta
 #Performance.delta
 # -/+ %
 #-----------------------------------------------
 
-fdat$Position = sapply(fdat$Position, function(position) {
-  return(assign_position())
+fdat$Puesto = sapply(fdat$Puesto, function(Puesto) {
+  return(assign_Puesto())
 })
 
-fdat$Attrition = sapply(fdat$Position, function(position) {
-  ifelse(position == "Manager", assign_attrition(0.054),
-         ifelse(position == "Executive", assign_attrition(0.1748), assign_attrition(0.3975)))
+fdat$Abandono = sapply(fdat$Puesto, function(Puesto) {
+  ifelse(Puesto == "Manager", assign_Abandono(0.054),
+         ifelse(Puesto == "Ejecutivo", assign_Abandono(0.1748), assign_Abandono(0.3975)))
   
 })
 
-fdat$Course.name = sapply(fdat$Course.days, function(days) {
-  assign_course_name(0.55)
+fdat$Curso = sapply(fdat$Curso.dias, function(dias) {
+  assign_Curso_name(0.55)
 })
 
-fdat$Course.online = sapply(fdat$Course.days, function(days) {
-  assign_course_online(0.65)
+fdat$Curso.online = sapply(fdat$Curso.dias, function(dias) {
+  assign_Curso_online(0.65)
 })
 
-fdat$Course.gpa = sapply(fdat$Course.days, function(days) {
+fdat$Curso.nota = sapply(fdat$Curso.dias, function(dias) {
   runif(1, 4.0, 10.0)
 })
 
 # Functions
 
-assign_attrition <- function(perc) {
-  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
+assign_Abandono <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
 }
 
-assign_position <- function() {
+assign_Puesto <- function() {
   perc = runif(1, 0.0, 1.0)
   return(ifelse(perc <= 0.085, "Manager",
-                ifelse(perc <= 0.181, "Representative", "Executive")))
+                ifelse(perc <= 0.181, "Representante", "Ejecutivo")))
 }
 
-assign_course_name <- function(perc) {
-  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Course A", "Course B"))
+assign_Curso <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Curso A", "Curso B"))
 }
 
-assign_course_online <- function(perc) {
-  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Yes", "No"))
+assign_Curso_online <- function(perc) {
+  return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
 }
-
 
 # Plots
-ggplot(fdat,  aes(x = Course.name, fill = Course.online)  ) + geom_bar() + xlab('Course.name') + ylab('Count')
-
-
+ggplot(fdat,  aes(x = Curso.name, fill = Curso.online)  ) + geom_bar() + xlab('Curso.name') + ylab('Count')
