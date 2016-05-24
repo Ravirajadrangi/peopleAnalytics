@@ -108,3 +108,66 @@ sensitivity(testPred, testing$Attrition)
 confMatrix <- confusionMatrix(testPred, testing$Attrition)
 
 confMatrix2 <- confusionMatrix(testing$Attrition, sample(testing$Attrition))
+
+names(dat)[names(dat)=="Age"] <- "Edad"
+names(dat)[names(dat)=="BusinessTravel"] <- "Viajes"
+names(dat)[names(dat)=="Department"] <- "Departamento"
+names(dat)[names(dat)=="DistanceFromHome"] <- "DistanciaDesdeCasa"
+names(dat)[names(dat)=="Education"] <- "Educacion"
+names(dat)[names(dat)=="EducationField"] <- "CampoDeEducacion"
+names(dat)[names(dat)=="Gender"] <- "Genero"
+names(dat)[names(dat)=="JobInvolvement"] <- "Implicacion"
+names(dat)[names(dat)=="MaritalStatus"] <- "EstadoCivil"
+names(dat)[names(dat)=="MonthlyIncome"] <- "SueldoMensual"
+names(dat)[names(dat)=="NumCompaniesWorked"] <- "NumEmpresasTrabajadas"
+names(dat)[names(dat)=="OverTime"] <- "HorasExtra"
+names(dat)[names(dat)=="PercentSalaryHike"] <- "PorcentajeAumentoSalarial"
+names(dat)[names(dat)=="PerformanceRating"] <- "Rendimiento"
+names(dat)[names(dat)=="RelationshipSatisfaction"] <- "RelacionSatisfaccion"
+names(dat)[names(dat)=="StockOptionLevel"] <- "NivelAcciones"
+names(dat)[names(dat)=="TotalWorkingYears"] <- "AñosTotalesTrabajados"
+names(dat)[names(dat)=="TrainingTimesLastYear"] <- "CursosUltimoAño"
+names(dat)[names(dat)=="WorkLifeBalance"] <- "EquilibrioVidaTrabajo"
+names(dat)[names(dat)=="YearsAtCompany"] <- "AñosEnEmpresa"
+names(dat)[names(dat)=="YearsInCurrentRole"] <- "AñosEnPuestoActual"
+names(dat)[names(dat)=="YearsSinceLastPromotion"] <- "AñosDesdeUltimaPromocion"
+names(dat)[names(dat)=="YearsWithCurrManager"] <- "AñosConJefeActual"
+names(dat)[names(dat)=="Attrition"] <- "Abandono"
+names(dat)[names(dat) == "JobRole"] <- "Cargo"
+names(dat)[names(dat) == "JobSatisfaction"] <- "SatisfaccionEnTrabajo"
+names(dat)[names(dat) == "JobLevel"] <- "NivelCargo"
+
+dat[] <- lapply(dat, as.character)
+
+dat$Abandono[dat$Abandono == "Yes"] <- "Si"
+dat$HorasExtra[dat$HorasExtra == "Yes"] <- "Si"
+
+dat$Viajes[dat$Viajes == "Travel_Rarely"] <- "Viaja_Raramente"
+dat$Viajes[dat$Viajes == "Travel_Frequently"] <- "Viaja_frecuentemente"
+dat$Viajes[dat$Viajes == "Non-Travel"] <- "No_Viaja"
+
+dat$Departamento[dat$Departamento == "Research & Development"] <- "Investigacion & Desarrollo"
+dat$Departamento[dat$Departamento == "Sales"] <- "Ventas"
+dat$Departamento[dat$Departamento == "Human Resources"] <- "Recursos Humanos"
+
+dat$CampoDeEducacion[dat$CampoDeEducacion == "Other"] <- "Otro"
+dat$CampoDeEducacion[dat$CampoDeEducacion == "Human Resources"] <- "Recursos Humanos"
+dat$CampoDeEducacion[dat$CampoDeEducacion == "Life Sciences"] <- "Ciencias de la Salud"
+dat$CampoDeEducacion[dat$CampoDeEducacion == "Medical"] <- "Medicina"
+dat$CampoDeEducacion[dat$CampoDeEducacion == "Technical Degree"] <- "Tecnico"
+
+dat$Genero[dat$Genero == "Female"] <- "Mujer"
+dat$Genero[dat$Genero == "Male"] <- "Hombre"
+
+dat$Cargo[dat$Cargo == "Healthcare Representative"] <- "Representante de Salud"
+dat$Cargo[dat$Cargo == "Human Resources"] <- "Recursos Humanos"
+dat$Cargo[dat$Cargo == "Laboratory Technician"] <- "Tecnico de Laboratorio"
+dat$Cargo[dat$Cargo == "Manufactoring Director"] <- "Director de Produccion"
+dat$Cargo[dat$Cargo == "Research Director"] <- "Director de Investigacion"
+dat$Cargo[dat$Cargo == "Research Scientist"] <- "Investigador Cientifico"
+dat$Cargo[dat$Cargo == "Sales Executive"] <- "Ejecutivo de Ventas"
+dat$Cargo[dat$Cargo == "Sales Representative"] <- "Representante de Ventas"
+
+dat$EstadoCivil[dat$EstadoCivil == "Single"] <- "Soltero"
+dat$EstadoCivil[dat$EstadoCivil == "Divorced"] <- "Divorciado"
+dat$EstadoCivil[dat$EstadoCivil == "Married"] <- "Casado"
