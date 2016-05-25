@@ -81,8 +81,61 @@ fdat$Curso.nota = sapply(fdat$Curso.dias, function(dias) {
   runif(1, 4.0, 10.0)
 })
 
-# Functions
+fdat$Rendimiento.delta = sapply(fdat, function(x) {
+  print(x[["Tematica"]])
+  if(getElement(fdat, "Tematica")=="Presentacion"){
+    rend=5
+    return(rend)
+  }else if(getElement(fdat, "Tematica")=="Negociacion"){
+    rend=10
+    return(rend)
+  }
+})
 
+fdat$Rendimiento.delta =apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, function(x){
+  if(x['Tematica']=='Presentacion'){
+    if(x['Curso.online']=='Si'){
+      if(x['Puesto']=='Ejecutivo'){
+        return(assign_rendimiento_delta(-5,5))
+      }else if(x['Puesto']=='Manager'){
+        return(assign_rendimiento_delta(-5,5))
+      }else{
+        return(assign_rendimiento_delta(5,35))
+      }
+      #Curso.online=No
+    }else{
+      if(x['Puesto']=='Ejecutivo'){
+        return(assign_rendimiento_delta(5,10))
+      }else if(x['Puesto']=='Manager'){
+        return(assign_rendimiento_delta(0,10))
+      }else{
+        return(assign_rendimiento_delta(20,50))
+      }
+    }
+  #Negociacion  
+  }else{
+    if(x['Curso.online']=='Si'){
+      if(x['Puesto']=='Ejecutivo'){
+        return(assign_rendimiento_delta(5,15))
+      }else if(x['Puesto']=='Manager'){
+        return(assign_rendimiento_delta(5,10))
+      }else{
+        return(assign_rendimiento_delta(-5,5))
+      }
+      #Curso.online=No
+    }else{
+      if(x['Puesto']=='Ejecutivo'){
+        return(assign_rendimiento_delta(15,25))
+      }else if(x['Puesto']=='Manager'){
+        return(assign_rendimiento_delta(10,15))
+      }else{
+        return(assign_rendimiento_delta(0,5))
+      }
+    }
+  }
+})
+
+# Functions
 assign_Abandono <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
 }
@@ -101,6 +154,9 @@ assign_Curso_online <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
 }
 
-names(fdat)[names(fdat) == 'Curso'] <- 'Tematica'
+assign_rendimiento_delta <- function(min,max){
+  round(runif(1, min, max), digits=2)
+}
+
 # Plots
 ggplot(fdat,  aes(x = Curso.name, fill = Curso.online)  ) + geom_bar() + xlab('Curso.name') + ylab('Count')
