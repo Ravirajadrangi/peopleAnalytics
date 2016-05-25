@@ -1,8 +1,8 @@
 # Libraries
 
 # Load data
-#fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
-fdat = read.csv("/Users/Hugo/Documents/EIT Master/SingularMeaning/peopleanalytics/employee-training.csv")
+fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
+# fdat = read.csv("/Users/Hugo/Documents/EIT Master/SingularMeaning/peopleanalytics/employee-training.csv")
 # Clean data
 fdat = na.omit(fdat)
 
@@ -81,55 +81,44 @@ fdat$Curso.nota = sapply(fdat$Curso.dias, function(dias) {
   runif(1, 4.0, 10.0)
 })
 
-fdat$Rendimiento.delta = sapply(fdat, function(x) {
-  print(x[["Tematica"]])
-  if(getElement(fdat, "Tematica")=="Presentacion"){
-    rend=5
-    return(rend)
-  }else if(getElement(fdat, "Tematica")=="Negociacion"){
-    rend=10
-    return(rend)
-  }
-})
-
 fdat$Rendimiento.delta =apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, function(x){
   if(x['Tematica']=='Presentacion'){
     if(x['Curso.online']=='Si'){
       if(x['Puesto']=='Ejecutivo'){
-        return(assign_rendimiento_delta(-5,5))
+        return(assign_rendimiento_delta(-2.5, 2.5))
       }else if(x['Puesto']=='Manager'){
-        return(assign_rendimiento_delta(-5,5))
+        return(assign_rendimiento_delta(-2.5, 2.5))
       }else{
-        return(assign_rendimiento_delta(5,35))
+        return(assign_rendimiento_delta(4, 8))
       }
       #Curso.online=No
     }else{
       if(x['Puesto']=='Ejecutivo'){
-        return(assign_rendimiento_delta(5,10))
+        return(assign_rendimiento_delta(2.5, 5))
       }else if(x['Puesto']=='Manager'){
-        return(assign_rendimiento_delta(0,10))
+        return(assign_rendimiento_delta(0,4))
       }else{
-        return(assign_rendimiento_delta(20,50))
+        return(assign_rendimiento_delta(5,10))
       }
     }
   #Negociacion  
   }else{
     if(x['Curso.online']=='Si'){
       if(x['Puesto']=='Ejecutivo'){
-        return(assign_rendimiento_delta(5,15))
+        return(assign_rendimiento_delta(4, 8))
       }else if(x['Puesto']=='Manager'){
-        return(assign_rendimiento_delta(5,10))
+        return(assign_rendimiento_delta(2, 6))
       }else{
-        return(assign_rendimiento_delta(-5,5))
+        return(assign_rendimiento_delta(-3,4))
       }
       #Curso.online=No
     }else{
       if(x['Puesto']=='Ejecutivo'){
-        return(assign_rendimiento_delta(15,25))
+        return(assign_rendimiento_delta(7,10))
       }else if(x['Puesto']=='Manager'){
-        return(assign_rendimiento_delta(10,15))
+        return(assign_rendimiento_delta(3,7))
       }else{
-        return(assign_rendimiento_delta(0,5))
+        return(assign_rendimiento_delta(0,3))
       }
     }
   }
