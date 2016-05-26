@@ -143,6 +143,30 @@ fdat$BeneficioNeto = apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, func
   return(currentValue)
 })
 
+#Get BeneficioNetoAbandono Total
+result<<-0
+BeneficioNetoAbandono = apply(fdat[,c('Abandono','BeneficioNeto')],1,function(x){
+  if(x['Abandono']=='Si'){
+  result=result+as.numeric(x['BeneficioNeto'])
+   return(result)
+  }
+  return(0)
+})
+beneficioNetoAbandonoTotal<-sum(BeneficioNetoAbandono)
+
+#Get BeneficioNetoAbandono Counter
+counter<<-0
+BeneficioNetoAbandonoCounter = apply(fdat[,c('Abandono','BeneficioNeto')],1,function(x){
+  if(x['Abandono']=='Si'){
+    counter=counter+1
+    return(counter)
+  }
+  return(0)
+})
+beneficioNetoCounter<-sum(BeneficioNetoAbandonoCounter)
+
+#Average Attrition Lost
+avgAttritionLost<-beneficioNetoAbandonoTotal/beneficioNetoCounter
 
 # Functions
 assign_Abandono <- function(perc) {
