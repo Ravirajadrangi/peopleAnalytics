@@ -124,6 +124,17 @@ fdat$Rendimiento.delta =apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, f
   }
 })
 
+
+#Using Normal Distribution to generate BeneficioNeto
+fdat$BeneficioNeto = apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, function(x){
+  currentValue<-rnorm(1, mean = 40000, sd = 30000)
+  if(currentValue<0){
+    currentValue<- currentValue+20000
+  }
+  return(currentValue)
+})
+
+
 # Functions
 assign_Abandono <- function(perc) {
   return(ifelse(runif(1, 0.0, 1.0)<=perc, "Si", "No"))
