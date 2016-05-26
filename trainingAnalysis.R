@@ -211,6 +211,24 @@ assign_dias <- function(tema) {
   }
 }
 
+
+## Conclusions
+
+# Benefits from training
+beneficioCurso = apply(fdat[, c('Rendimiento.delta', 'BeneficioNeto', 'Curso.coste')], 1, function (x) {
+  return((x[["Rendimiento.delta"]]/100)*x[["BeneficioNeto"]] - x[["Curso.coste"]])
+})
+beneficioCurso = sum(beneficioCurso)
+percAbandonoActual = nrow(fdat[fdat$Abandono == "Si",])/nrow(fdat)
+abandonos = nrow(fdat[fdat$Abandono == "Si",]);
+perdidaMediaAbandono = 39732
+percAbandonoPrev = 0.20
+percDisminucionAbandono = percAbandonoPrev - percAbandonoActual
+disminucionAbandono = nrow(fdat)*percDisminucionAbandono
+gananciaDisminucionAbandono = disminucionAbandono*perdidaMediaAbandono
+beneficioCursoTotal = beneficioCurso + gananciaDisminucionAbandono
+
+
 # Plots
-ggplot(fdat,  aes(x = Curso.name, fill = Curso.online)  ) + geom_bar() + xlab('Curso.name') + ylab('Count')
+ggplot(fdat,  aes(x = Abandono, position = "fill")) + geom_bar() + scale_y_continuous(labels = percent_format())
 ggplot(fdat, aes(x = Rendimiento.delta)) + geom_histogram(binwidth = 0.1)
