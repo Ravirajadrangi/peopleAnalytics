@@ -1,4 +1,5 @@
 # Libraries
+library(ggplot2)
 
 # Load data
 fdat = read.csv("~/sngular/peopleAnalytics/employee-training.csv")
@@ -78,7 +79,15 @@ fdat$Curso.online = sapply(fdat$Curso.dias, function(dias) {
 })
 
 fdat$Curso.nota = sapply(fdat$Curso.dias, function(dias) {
-  runif(1, 4.0, 10.0)
+  round(runif(1, 4.0, 10.0), digits = 2)
+})
+
+fdat$Curso.dias = sapply(fdat$Tematica, function (tema) {
+  assign_dias(tema)
+})
+
+fdat$Curso.coste = apply(fdat[,c('Tematica','Curso.online', "Curso.dias")], 1, function (x) {
+  assign_Coste(x[['Tematica']], x[['Curso.online']], x[['Curso.dias']])
 })
 
 fdat$Rendimiento.delta =apply(fdat[,c('Puesto','Tematica','Curso.online')], 1, function(x){
@@ -147,5 +156,26 @@ assign_rendimiento_delta <- function(min,max){
   round(runif(1, min, max), digits=2)
 }
 
+assign_Coste <- function (tema, online, dias) {
+  dias = as.numeric(dias)
+  online_cost = c(100, 0)
+  names(online_cost) <- c("Si", "No")
+  cost_per_day = c(300, 450)
+  names(cost_per_day) <- c("Negociacion", "Presentacion")
+  
+  # Online cost is not multiplied by num of days because it's a one time cost
+  # cost_per_day refers to the cost of teachers, installations, etc. of an specific kind of course
+  return(cost_per_day[tema]*dias + online_cost[online])
+}
+
+assign_dias <- function(tema) {
+  if (tema == "Negociacion") {
+    return(ifelse(runif(1,0,1) < 0.5, 4, 8))
+  } else {
+    return(ifelse(runif(1,0,1) < 0.5, 2, 5))
+  }
+}
+
 # Plots
 ggplot(fdat,  aes(x = Curso.name, fill = Curso.online)  ) + geom_bar() + xlab('Curso.name') + ylab('Count')
+ggplot(fdat, aes(x = Rendimiento.delta)) + geom_histogram(binwidth = 0.1)
