@@ -44,35 +44,15 @@ write.csv(dat, "employee-attrition.csv", row.names = FALSE)
 #Sales Representatives, Attrition rate against NumberOfCourses taken last year.
 ggplot(dat[dat$Puesto=='Representante de Ventas',],  aes(x = CursosUltimoAno, fill = Abandono)  ) + geom_bar() + xlab('CursosUltimoAno') + ylab('Count')
 
-# Attrition over job roles
-ggplot(dat, aes(x = JobRole, fill = Attrition)) +
-  stat_count(width = 0.5) +
-  xlab("Job role") +
-  ylab("Count") +
-  labs(fill = "Attrition")
-
-ggplot(dat, aes(x = JobRole)) + geom_bar(aes(fill = Attrition), position = 'fill') +
-  scale_y_continuous(labels = percent_format())
+# Attrition over departamento
+ggplot(dat, aes(x = Departamento, fill = Abandono)) + geom_bar()+ xlab('Departamento') + ylab('Count')
 
 # Attrition over job level
-ggplot(dat, aes(x = JobLevel, fill = Attrition)) +
-  stat_count(width = 0.5) +
-  xlab("Job Level") +
-  ylab("Count") +
-  labs(fill = "Attrition")
-
-ggplot(dat, aes(x = JobLevel)) + geom_bar(aes(fill = Attrition), position = 'fill') +
+ggplot(dat, aes(x = NivelCargo)) + geom_bar(aes(fill = Abandono), position = 'fill') +
   scale_y_continuous(labels = percent_format())
 
-# Attrition over overtime
-ggplot(dat, aes(x = OverTime, fill = Attrition)) +
-  stat_count(width = 0.5) +
-  xlab("OverTime") +
-  ylab("Count") +
-  labs(fill = "Attrition")
-
-ggplot(dat, aes(x = OverTime)) + geom_bar(aes(fill = Attrition), position = 'fill') +
-  scale_y_continuous(labels = percent_format())
+# Attrition horasExtra
+ggplot(dat, aes(x = HorasExtra, fill = Abandono)) + geom_bar()+ xlab('Departamento') + ylab('Count')
 
 
 # Calculate standard deviations
@@ -81,25 +61,46 @@ sapply(dat, sd)
 # Classification
 
 # 0.75 training, 0.25 testing
-inTraining <- createDataPartition(dat$Attrition, p=.75, list=FALSE)
+inTraining <- createDataPartition(dat$Abandono, p=.75, list=FALSE)
 training <- dat[ inTraining, ]
 testing <- dat[ -inTraining, ]
 
 # Decision tree
 fit <- rpart(
-  Attrition ~ 
-    OverTime + TotalWorkingYears + JobLevel + MaritalStatus + 
-    YearsInCurrentRole + MonthlyIncome + Age + YearsWithCurrManager + 
-    StockOptionLevel , data=training, method="class") 
+  Abandono ~ 
+    HorasExtra + AnosTotalesTrabajados + NivelCargo + EstadoCivil + 
+    AnosEnPuestoActual + SueldoMensual + Edad + AnosConJefeActual + 
+    NivelAcciones + CursosUltimoAno, data=training, method="class") 
 
 prp(fit)
 
 # Random forest
+fitControl <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 5
+)
+
+rpart_Fit1 <- train(Abandono ~ ., data = training,
+                    method = "rpartCost",
+                    trControl = fitControl
+)
+rpart_Fit1
+
+rf_Fit1 <- train(Abandono ~ ., data = training,
+                 method = "rf",
+                 trControl = fitControl,
+                 ntree = 2000
+)
+rf_Fit1
+
+rpart.plot(rpart_Fit1$finalModel, extra = 2)
+
 rForestFit <- randomForest(
-  Attrition ~ 
-    OverTime + TotalWorkingYears + JobLevel + MaritalStatus + 
-    YearsInCurrentRole + MonthlyIncome + Age + YearsWithCurrManager + 
-    StockOptionLevel, 
+  Abandono ~ 
+    HorasExtra + AnosTotalesTrabajados + NivelCargo + EstadoCivil + 
+    AnosEnPuestoActual + SueldoMensual + Edad + AnosConJefeActual + 
+    NivelAcciones, 
   data = training,
   ntree = 100)
 print(rForestFit)
@@ -107,13 +108,13 @@ varImpPlot(rForestFit)
 
 testPred <- predict(fit, testing , type="class")
 
-postResample(testPred, testing$Attrition)
+postResample(testPred, testing$Abandono)
 
-sensitivity(testPred, testing$Attrition)
+sensitivity(testPred, testing$Abandono)
 
-confMatrix <- confusionMatrix(testPred, testing$Attrition)
+confMatrix <- confusionMatrix(testPred, testing$Abandono)
 
-confMatrix2 <- confusionMatrix(testing$Attrition, sample(testing$Attrition))
+confMatrix2 <- confusionMatrix(testing$Abandono, sample(testing$Abandono))
 
 #### Fixing Data: Representatives with low attrition, should have low training.
 
@@ -178,3 +179,38 @@ dat$CursosUltimoAno = apply(dat[,c('Abandono','CursosUltimoAno','Puesto')], 1, f
   }
   return(x['CursosUltimoAno'])
 })
+
+#Using Normal Distribution to generate BeneficioNeto
+dat$BeneficioNeto = apply(dat[,c('Puesto', 'Viajes')], 1, function(x){
+  currentValue<-rnorm(1, mean = 40000, sd = 30000)
+  if(currentValue<0){
+    currentValue<- currentValue+20000
+  }
+  return(currentValue)
+})
+
+#Get BeneficioNetoAbandono Total
+result<<-0
+BeneficioNetoAbandono = apply(dat[,c('Abandono','BeneficioNeto', 'Departamento')],1,function(x){
+  if(x['Abandono']=='Si' && x['Departamento']=='Ventas'){
+    result=result+as.numeric(x['BeneficioNeto'])
+    return(result)
+  }
+  return(0)
+})
+beneficioNetoAbandonoTotal<-sum(BeneficioNetoAbandono)
+
+#Get BeneficioNetoAbandono Counter
+counter<<-0
+BeneficioNetoAbandonoCounter = apply(dat[,c('Abandono','BeneficioNeto', 'Departamento')],1,function(x){
+  if(x['Abandono']=='Si' && x['Departamento']=='Ventas'){
+    counter=counter+1
+    return(counter)
+  }
+  return(0)
+})
+beneficioNetoCounter<-sum(BeneficioNetoAbandonoCounter)
+
+#Average Attrition Lost
+avgAttritionLostS1<-beneficioNetoAbandonoTotal/beneficioNetoCounter
+print(avgAttritionLost)
