@@ -66,7 +66,7 @@ fdat$Puesto = sapply(fdat$Puesto, function(Puesto) {
 
 fdat$Abandono = sapply(fdat$Puesto, function(Puesto) {
   ifelse(Puesto == "Manager", assign_Abandono(0.054),
-         ifelse(Puesto == "Ejecutivo", assign_Abandono(0.1748), assign_Abandono(0.3975)))
+         ifelse(Puesto == "Ejecutivo", assign_Abandono(0.1148), assign_Abandono(0.2975)))
   
 })
 
@@ -193,14 +193,14 @@ assign_rendimiento_delta <- function(min,max){
 
 assign_Coste <- function (tema, online, dias) {
   dias = as.numeric(dias)
-  online_cost = c(100, 0)
+  online_cost = c(0, 100)
   names(online_cost) <- c("Si", "No")
-  cost_per_day = c(300, 450)
-  names(cost_per_day) <- c("Negociacion", "Presentacion")
+  cost_per_day_per_person = c(150, 225)
+  names(cost_per_day_per_person) <- c("Negociacion", "Presentacion")
   
   # Online cost is not multiplied by num of days because it's a one time cost
   # cost_per_day refers to the cost of teachers, installations, etc. of an specific kind of course
-  return(cost_per_day[tema]*dias + online_cost[online])
+  return(cost_per_day_per_person[tema]*dias + online_cost[online])
 }
 
 assign_dias <- function(tema) {
