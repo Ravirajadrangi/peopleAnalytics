@@ -66,7 +66,7 @@ fdat$Puesto = sapply(fdat$Puesto, function(Puesto) {
 
 fdat$Abandono = sapply(fdat$Puesto, function(Puesto) {
   ifelse(Puesto == "Manager", assign_Abandono(0.054),
-         ifelse(Puesto == "Ejecutivo", assign_Abandono(0.1748), assign_Abandono(0.3975)))
+         ifelse(Puesto == "Ejecutivo", assign_Abandono(0.1148), assign_Abandono(0.2975)))
   
 })
 
@@ -166,7 +166,7 @@ BeneficioNetoAbandonoCounter = apply(fdat[,c('Abandono','BeneficioNeto')],1,func
 beneficioNetoCounter<-sum(BeneficioNetoAbandonoCounter)
 
 #Average Attrition Lost
-avgAttritionLostS2<-beneficioNetoAbandonoTotal/beneficioNetoCounter
+avgAttritionLost<-beneficioNetoAbandonoTotal/beneficioNetoCounter
 
 # Functions
 assign_Abandono <- function(perc) {
@@ -193,14 +193,14 @@ assign_rendimiento_delta <- function(min,max){
 
 assign_Coste <- function (tema, online, dias) {
   dias = as.numeric(dias)
-  online_cost = c(100, 0)
+  online_cost = c(0, 100)
   names(online_cost) <- c("Si", "No")
-  cost_per_day = c(300, 450)
-  names(cost_per_day) <- c("Negociacion", "Presentacion")
+  cost_per_day_per_person = c(150, 225)
+  names(cost_per_day_per_person) <- c("Negociacion", "Presentacion")
   
   # Online cost is not multiplied by num of days because it's a one time cost
   # cost_per_day refers to the cost of teachers, installations, etc. of an specific kind of course
-  return(cost_per_day[tema]*dias + online_cost[online])
+  return(cost_per_day_per_person[tema]*dias + online_cost[online])
 }
 
 assign_dias <- function(tema) {
@@ -211,44 +211,24 @@ assign_dias <- function(tema) {
   }
 }
 
+
+## Conclusions
+
+# Benefits from training
+beneficioCurso = apply(fdat[, c('Rendimiento.delta', 'BeneficioNeto', 'Curso.coste')], 1, function (x) {
+  return((x[["Rendimiento.delta"]]/100)*x[["BeneficioNeto"]] - x[["Curso.coste"]])
+})
+beneficioCurso = sum(beneficioCurso)
+percAbandonoActual = nrow(fdat[fdat$Abandono == "Si",])/nrow(fdat)
+abandonos = nrow(fdat[fdat$Abandono == "Si",]);
+perdidaMediaAbandono = 39732
+percAbandonoPrev = 0.20
+percDisminucionAbandono = percAbandonoPrev - percAbandonoActual
+disminucionAbandono = nrow(fdat)*percDisminucionAbandono
+gananciaDisminucionAbandono = disminucionAbandono*perdidaMediaAbandono
+beneficioCursoTotal = beneficioCurso + gananciaDisminucionAbandono
+
+
 # Plots
-ggplot(fdat,  aes(x = Tematica, fill = Curso.online)  ) + geom_bar() + xlab('Tematica') + ylab('Count')
-
-#Abandono over Puesto
-ggplot(fdat, aes(x = Puesto, fill = Abandono)) + geom_bar() + xlab('Puesto') + ylab('Numero de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Attrition de Representantes
-ggplot(fdat[fdat$Puesto=='Representante',],  aes(x = Tematica, fill = Abandono)  ) + geom_bar() + xlab('Tematica') + ylab('Cantidad de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Attrition de Managers
-ggplot(fdat[fdat$Puesto=='Manager',],  aes(x = Tematica, fill = Abandono)  ) + geom_bar() + xlab('Tematica') + ylab('Cantidad de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Attrition de Ejecutivos
-ggplot(fdat[fdat$Puesto=='Ejecutivo',],  aes(x = Tematica, fill = Abandono)  ) + geom_bar() + xlab('Tematica') + ylab('Cantidad de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Attrition de Departamento over Online/Presencial
-ggplot(fdat, aes(x = Curso.online, fill = Abandono)) + geom_bar() + xlab('Online') + ylab('Numero de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Attrition de Departamento over Tematica
-ggplot(fdat, aes(x = Tematica, fill = Abandono)) + geom_bar() + xlab('Tematica') + ylab('Numero de Empleados') + theme_bw() + scale_fill_manual(values=c("dark blue", "gray"))
-
-#Rendimiento over Puesto
-ggplot(fdat, aes(x = Rendimiento.delta, y=Puesto) + geom_bar() + xlab('Puesto') + ylab('Rendimiento %') + theme_bw())
-
-#Sales Representatives, Attrition rate against Curso.dias taken last year.
-ggplot(fdat[fdat$Puesto=='Representante',],  aes(x = Curso.dias, fill = Abandono)  ) +
-  scale_y_continuous(labels = percent_format()) + scale_x_continuous(breaks = seq(0,6,1)) +
-  geom_bar(position = 'fill') + xlab('Cursos en el ultimo ano') + ylab('Porcentaje de abandono') +
-  theme_bw() + scale_fill_manual(values=c("dark blue", "gray")) + ggtitle("Representantes de Ventas")
-
-ggplot(fdat[fdat$Puesto=='Representante',],  aes(x = Rendimiento.delta, fill = Abandono)  ) +
-  scale_y_continuous(labels = percent_format()) +
-  geom_bar(position = 'fill') + xlab('Rendimiento %') + ylab('Porcentaje de abandono') +
-  theme_bw() + scale_fill_manual(values=c("dark blue", "gray")) + ggtitle("Representantes de Ventas")
-#Sales Rendimiento over Tematica
-test<- c(4,7)
-print(length(test))
-print(length(fdat$Tematica))
-ggplot(fdat,  aes(x = Tematica, y = test) ) +
-  geom_bar() + xlab('Tematica del curso') + ylab('Cambio de Rendimiento Promedio') +
-  theme_bw() + scale_fill_manual(values=c("dark blue", "gray")) + ggtitle("Representantes de Ventas")
+ggplot(fdat,  aes(x = Abandono, position = "fill")) + geom_bar() + scale_y_continuous(labels = percent_format())
+ggplot(fdat, aes(x = Rendimiento.delta)) + geom_histogram(binwidth = 0.1)
