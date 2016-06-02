@@ -4,10 +4,12 @@ library(rpart)
 library(rpart.plot)
 library(ggplot2)
 library(scales)
+library(corrplot)
+library(partykit)
 
 # Load data
 originalData <- read.csv("~/sngular/peopleAnalytics/employee-attrition.csv")
-dat = originalData
+dat = originalData[originalData$Departamento == "Ventas",]
 
 ## See data types
 str(dat)
@@ -16,18 +18,33 @@ str(dat)
 dat = na.omit(dat)
 
 # Remove unnecessary variables
-dat = subset(dat, select = -c(EmployeeCount, EmployeeNumber, Over18, StandardHours, HourlyRate, DailyRate, MonthlyRate))
+# dat = subset(dat, select = -c(EmployeeCount, EmployeeNumber, Over18, StandardHours, HourlyRate, DailyRate, MonthlyRate))
+dat = subset(dat, select = -c(NivelAcciones))
+# NumDat
+# numdat = subset(dat, select=c(AnosEnEmpresa, AnosConJefeActual, AnosEnPuestoActual))
+numdat = subset(dat,select = c(AnosTotalesTrabajados, AnosEnEmpresa, AnosEnPuestoActual, AnosDesdeUltimaPromocion, AnosConJefeActual))
+numdat$Viajes = as.numeric(numdat$Viajes)
+numdat$Departamento = as.numeric(numdat$Departamento)
+numdat$CampoDeEducacion = as.numeric(numdat$CampoDeEducacion)
+numdat$Genero = as.numeric(numdat$Genero)
+numdat$Puesto = as.numeric(numdat$Puesto)
+numdat$EstadoCivil = as.numeric(numdat$EstadoCivil)
+numdat$HorasExtra = as.numeric(numdat$HorasExtra)
 
+# Correlation matrix
+M <- cor(numdat)
+corrplot(M, method="number")
+corrplot(M, method="square")
 # Factors (Traducirlo)
-dat$Education <- as.factor(dat$Education)
-dat$EnvironmentSatisfaction <- as.factor(dat$EnvironmentSatisfaction)
-dat$JobInvolvement <- as.factor(dat$JobInvolvement)
-dat$JobSatisfaction <- as.factor(dat$JobSatisfaction)
-dat$PerformanceRating <- as.factor(dat$PerformanceRating)
-dat$RelationshipSatisfaction <- as.factor(dat$RelationshipSatisfaction)
-dat$WorkLifeBalance <- as.factor(dat$WorkLifeBalance)
-dat$JobLevel <- as.factor(dat$JobLevel)
-dat$StockOptionLevel <- as.factor(dat$StockOptionLevel)
+# dat$Education <- as.factor(dat$Education)
+# dat$EnvironmentSatisfaction <- as.factor(dat$EnvironmentSatisfaction)
+# dat$JobInvolvement <- as.factor(dat$JobInvolvement)
+# dat$JobSatisfaction <- as.factor(dat$JobSatisfaction)
+# dat$PerformanceRating <- as.factor(dat$PerformanceRating)
+# dat$RelationshipSatisfaction <- as.factor(dat$RelationshipSatisfaction)
+# dat$WorkLifeBalance <- as.factor(dat$WorkLifeBalance)
+# dat$JobLevel <- as.factor(dat$JobLevel)
+# dat$StockOptionLevel <- as.factor(dat$StockOptionLevel)
 
 #Writing data to csv
 write.csv(dat, "employee-attrition.csv", row.names = FALSE)
@@ -42,18 +59,36 @@ write.csv(dat, "employee-attrition.csv", row.names = FALSE)
 # Plots
 
 #Sales Representatives, Attrition rate against NumberOfCourses taken last year.
-ggplot(dat[dat$Puesto=='Representante de Ventas',],  aes(x = CursosUltimoAno, fill = Abandono)  ) + geom_bar() + xlab('CursosUltimoAno') + ylab('Count')
+ggplot(dat,  aes(x = CursosUltimoAno, fill = Abandono)  ) +
+  scale_y_continuous(labels = percent_format()) + scale_x_continuous(breaks = seq(0,6,1)) +
+  geom_bar(position = 'fill') + xlab('Cursos en el ultimo año') + ylab('Porcentaje de abandono') +
+  theme_bw(base_size = 18) + scale_fill_manual(values=c("dark blue", "dark red")) + ggtitle("Abandono por formación")
 
-# Attrition over departamento
-ggplot(dat, aes(x = Departamento, fill = Abandono)) + geom_bar()+ xlab('Departamento') + ylab('Count')
 
-# Attrition over job level
-ggplot(dat, aes(x = NivelCargo)) + geom_bar(aes(fill = Abandono), position = 'fill') +
-  scale_y_continuous(labels = percent_format())
+# Attrition SueldoMensual
+# ggplot(dat, aes(x = SueldoMensual, fill = Abandono)) + geom_histogram(binwidth = 1000) +
+#   scale_x_continuous(breaks = seq(0, 20000, 2000)) +
+#   theme_bw() + scale_fill_manual(values=c("dark blue", "dark red"))
 
 # Attrition horasExtra
-ggplot(dat, aes(x = HorasExtra, fill = Abandono)) + geom_bar()+ xlab('Departamento') + ylab('Count')
+ggplot(dat, aes(x = HorasExtra)) + geom_bar(aes(fill = Abandono), position = 'fill') +
+  scale_y_continuous(labels = percent_format()) + ggtitle("Abandonos por horas extra") +
+  theme_bw(base_size = 18) + scale_fill_manual(values=c("dark blue", "dark red")) + xlab("Horas extra") + ylab("Porcentaje de abandono")
 
+# Attrition viajes
+freqs = c("No_Viaja", "Viaja_Raramente", "Viaja_frecuentemente")
+ggplot(dat, aes(x = Viajes)) + geom_bar(aes(fill = Abandono), position = 'fill') + scale_x_discrete(limits = freqs) +
+  scale_y_continuous(labels = percent_format()) + xlab("Frecuencia de viaje") + ylab("Porcentaje de abandono") +
+  theme_bw(base_size = 18) + scale_fill_manual(values=c("dark blue", "dark red")) + ggtitle("Abandonos segun frecuencia de viaje")
+
+# Attrition puesto
+puestos = c("Manager", "Ejecutivo de Ventas", "Representante de Ventas")
+ggplot(dat, aes(x = Puesto)) + geom_bar(aes(fill = Abandono), position = 'fill') + scale_x_discrete(limits = puestos) +
+  scale_y_continuous(labels = percent_format()) + xlab("Puesto") + ylab("Porcentaje de abandono") +
+  theme_bw(base_size = 18) + scale_fill_manual(values=c("dark blue", "dark red")) + ggtitle("Abandonos segun puesto")
+
+# Corr
+ggplot(dat, aes(AnosEnEmpresa, AnosEnPuestoActual))+ geom_point(method = "lm")  + geom_point() 
 
 # Calculate standard deviations
 sapply(dat, sd)
@@ -66,13 +101,31 @@ training <- dat[ inTraining, ]
 testing <- dat[ -inTraining, ]
 
 # Decision tree
-fit <- rpart(
-  Abandono ~ 
-    HorasExtra + AnosTotalesTrabajados + NivelCargo + EstadoCivil + 
-    AnosEnPuestoActual + SueldoMensual + Edad + AnosConJefeActual + 
-    NivelAcciones + CursosUltimoAno, data=training, method="class") 
+fit <- rpart(Abandono ~ Edad + Viajes + Departamento + DistanciaDesdeCasa + Educacion +
+               CampoDeEducacion + SatisfaccionEnAmbiente + Genero + Implicacion + NivelCargo +
+               Puesto + SatisfaccionEnTrabajo + EstadoCivil + SueldoMensual + NumEmpresasTrabajadas +
+               HorasExtra + PorcentajeAumentoSalarial + Rendimiento + RelacionSatisfaccion + AnosTotalesTrabajados +
+               CursosUltimoAno + EquilibrioVidaTrabajo + AnosEnEmpresa + AnosEnPuestoActual + AnosDesdeUltimaPromocion +
+               AnosConJefeActual, data=training, method="class")
+par(xpd=TRUE)
+prp(fit, extra = 7, box.col=c("blue", "red")[fit$frame$yval], gap = 0, faclen = 0, varlen = 0)
+legend("bottomleft", legend = c("Abandona", "Permanece"), fill = c("red", "blue"),
+       title = "Abandono")
 
-prp(fit)
+fit <- rpart(Abandono ~ Edad + Viajes + Departamento + DistanciaDesdeCasa + Educacion +
+               CampoDeEducacion + SatisfaccionEnAmbiente + Genero + Implicacion + NivelCargo +
+               Puesto + SatisfaccionEnTrabajo + EstadoCivil + SueldoMensual + NumEmpresasTrabajadas +
+               HorasExtra + PorcentajeAumentoSalarial + Rendimiento + RelacionSatisfaccion +
+               CursosUltimoAno + EquilibrioVidaTrabajo + AnosEnEmpresa, data=training, method="class") 
+par(xpd=TRUE)
+prp(fit, extra = 7, box.col=c("blue", "red")[fit$frame$yval], gap = 0, faclen = 0, varlen = 0)
+legend("bottomleft", legend = c("Abandona", "Permanece"), fill = c("red", "blue"),
+       title = "Abandono")
+# plot(as.party(fit))
+# rpart.plot()
+# plot(fit, compress=TRUE)
+# text(fit, use.n = TRUE)
+
 
 # Random forest
 fitControl <- trainControl(
@@ -213,4 +266,4 @@ beneficioNetoCounter<-sum(BeneficioNetoAbandonoCounter)
 
 #Average Attrition Lost
 avgAttritionLostS1<-beneficioNetoAbandonoTotal/beneficioNetoCounter
-print(avgAttritionLost)
+print(avgAttritionLostS1)
